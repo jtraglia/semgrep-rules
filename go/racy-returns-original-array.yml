@@ -1,0 +1,40 @@
+rules:
+- id: racy-returns-original-array
+  severity: WARNING
+  languages: [go]
+  message: |
+    Surrounded by a lock, this returns a pointer to the internal interface's
+    array field. This may not work the way you intend. It would be safer to
+    make a copy and return that.
+  pattern-either:
+    #
+    # Single return value.
+    #
+    - patterns:
+      - pattern: |
+          func ($T $TYPE) $FUNC(...) []$RET {
+            ...
+            $VAR.$LOCK()
+            ...
+            return $T.$FIELD
+            ...
+          }
+      - metavariable-regex:
+          metavariable: $LOCK
+          regex: (Lock|RLock)
+
+    #
+    # Multiple return values.
+    #
+    - patterns:
+      - pattern: |
+          func ($T $TYPE) $FUNC(...) (..., []$RET, ...) {
+            ...
+            $VAR.$LOCK()
+            ...
+            return ..., $T.$FIELD, ...
+            ...
+          }
+      - metavariable-regex:
+          metavariable: $LOCK
+          regex: (Lock|RLock)
