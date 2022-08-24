@@ -1,0 +1,42 @@
+rules:
+- id: returns-non-exported-slice
+  severity: WARNING
+  languages: [go]
+  message: |
+    This exported method returns an non-exported slice field. This may be
+    unintended, as modifying the return value will also modify the slice in the
+    structure. It would be safer to make a copy and return that.
+  pattern-either:
+    #
+    # Single return value.
+    #
+    - patterns:
+      - pattern: |
+          func ($T $TYPE) $METHOD(...) []$RET {
+            ...
+            return $T.$FIELD
+            ...
+          }
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ([A-Z].*)
+      - metavariable-regex:
+          metavariable: $FIELD
+          regex: ([a-z].*)
+
+    #
+    # Multiple return values.
+    #
+    - patterns:
+      - pattern: |
+          func ($T $TYPE) $METHOD(...) (..., []$RET, ...) {
+            ...
+            return ..., $T.$FIELD, ...
+            ...
+          }
+      - metavariable-regex:
+          metavariable: $METHOD
+          regex: ([A-Z].*)
+      - metavariable-regex:
+          metavariable: $FIELD
+          regex: ([a-z].*)
