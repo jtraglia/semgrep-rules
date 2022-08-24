@@ -1,10 +1,10 @@
 rules:
-- id: racy-returns-original-array
+- id: racy-returns-slice
   severity: WARNING
   languages: [go]
   message: |
     Surrounded by a lock, this returns a pointer to the internal interface's
-    array field. This may not work the way you intend. It would be safer to
+    slice field. This may not work the way you intend. It would be safer to
     make a copy and return that.
   pattern-either:
     #
