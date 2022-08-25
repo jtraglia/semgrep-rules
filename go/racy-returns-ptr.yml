@@ -15,25 +15,35 @@ rules:
             ...
             $VAR.$LOCK()
             ...
+            defer $VAR.$UNLOCK()
+            ...
             return $T.$FIELD
             ...
           }
       - metavariable-regex:
           metavariable: $LOCK
           regex: (Lock|RLock)
+      - metavariable-regex:
+          metavariable: $UNLOCK
+          regex: (Unlock|RUnlock)
 
     #
     # Multiple return values.
     #
     - patterns:
       - pattern: |
-          func ($T $TYPE) $FUNC(...) (..., *$RET, ...) {
+          func ($T $TYPE) $FUNC(...) (*$RET, ...) {
             ...
             $VAR.$LOCK()
             ...
-            return ..., $T.$FIELD, ...
+            defer $VAR.$UNLOCK()
+            ...
+            return $T.$FIELD, ...
             ...
           }
       - metavariable-regex:
           metavariable: $LOCK
           regex: (Lock|RLock)
+      - metavariable-regex:
+          metavariable: $UNLOCK
+          regex: (Unlock|RUnlock)
