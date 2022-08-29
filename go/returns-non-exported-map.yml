@@ -1,10 +1,10 @@
 rules:
-- id: returns-non-exported-slice
+- id: returns-non-exported-map
   severity: WARNING
   languages: [go]
   message: |
-    This exported method returns an non-exported slice field. This may be
-    unintended, as modifying the return value will also modify the slice in the
+    This exported method returns an non-exported map field. This may be
+    unintended, as modifying the return value will also modify the map in the
     structure. It would be safer to make a copy and return that.
   pattern-either:
     #
