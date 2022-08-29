@@ -45,4 +45,4 @@ rules:
           regex: ([a-z].*)
       - metavariable-comparison:
           # strings are immutible
-          comparison: str($A) != "string"
+          comparison: str($RET) != "string"
