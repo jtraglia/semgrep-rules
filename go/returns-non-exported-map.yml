@@ -12,7 +12,7 @@ rules:
     #
     - patterns:
       - pattern: |
-          func ($T $TYPE) $METHOD(...) []$RET {
+          func ($T $TYPE) $METHOD(...) map[$K]$V {
             ...
             return $T.$FIELD
             ...
@@ -29,7 +29,7 @@ rules:
     #
     - patterns:
       - pattern: |
-          func ($T $TYPE) $METHOD(...) ([]$RET, ...) {
+          func ($T $TYPE) $METHOD(...) (map[$K]$V, ...) {
             ...
             return $T.$FIELD, ...
             ...

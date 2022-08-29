@@ -1,0 +1,50 @@
+rules:
+- id: racy-returns-map
+  severity: WARNING
+  languages: [go]
+  message: |
+    Surrounded by a lock, this returns a pointer to the internal interface's
+    map field. This may not work the way you intend. It would be safer to make
+    a copy and return that.
+  pattern-either:
+    #
+    # Single return value.
+    #
+    - patterns:
+      - pattern: |
+          func ($T $TYPE) $FUNC(...) map[$K]$V {
+            ...
+            $VAR.$LOCK()
+            ...
+            defer $VAR.$UNLOCK()
+            ...
+            return $T.$FIELD
+            ...
+          }
+      - metavariable-regex:
+          metavariable: $LOCK
+          regex: (Lock|RLock)
+      - metavariable-regex:
+          metavariable: $UNLOCK
+          regex: (Unlock|RUnlock)
+
+    #
+    # Multiple return values.
+    #
+    - patterns:
+      - pattern: |
+          func ($T $TYPE) $FUNC(...) (map[$K]$V, ...) {
+            ...
+            $VAR.$LOCK()
+            ...
+            defer $VAR.$UNLOCK()
+            ...
+            return $T.$FIELD, ...
+            ...
+          }
+      - metavariable-regex:
+          metavariable: $LOCK
+          regex: (Lock|RLock)
+      - metavariable-regex:
+          metavariable: $UNLOCK
+          regex: (Unlock|RUnlock)
